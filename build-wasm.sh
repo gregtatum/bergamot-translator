@@ -67,11 +67,11 @@ fi
 cd ${BUILD_DIRECTORY}
 
 if [ "$WORMHOLE" = true ]; then
-  emcmake cmake -DCOMPILE_WASM=on ../
+  emcmake cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCOMPILE_WASM=on ../
 else
-  emcmake cmake -DCOMPILE_WASM=on -DWORMHOLE=off ../
+  emcmake cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCOMPILE_WASM=on -DWORMHOLE=off ../
 fi
-emmake make -j2
+emmake make -j10
 
 #     2. Enable SIMD Wormhole via Wasm instantiation API in generated artifacts
 if [ "$WORMHOLE" = true ]; then
