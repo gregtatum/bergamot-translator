@@ -13,6 +13,7 @@ project(bergamot_translator CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Note that with CMake MSVC build, the option CMAKE_BUILD_TYPE is automatically derived from the key
 # 'configurationType' in CMakeSettings.json configurations
