@@ -54,7 +54,7 @@ endif()
 if(MSVC)
   add_definitions(-DUSE_SSE2=1) # Supposed to fix something in the sse_mathfun.h but not sure it does
   set(INTRINSICS ${MSVC_BUILD_ARCH}) # ARCH we're targetting on win32. @TODO variable
-  
+
   set(CMAKE_CXX_FLAGS           "/EHsc /DWIN32 /D_WINDOWS /DUNICODE /D_UNICODE /D_CRT_NONSTDC_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS /bigobj")
   set(CMAKE_CXX_FLAGS_RELEASE   "${CMAKE_CXX_FLAGS} /MT /O2 ${INTRINSICS} /MP /GL /DNDEBUG")
   set(CMAKE_CXX_FLAGS_DEBUG     "${CMAKE_CXX_FLAGS} /MTd /Od /Ob0 ${INTRINSICS} /RTC1 /Zi /D_DEBUG")
@@ -146,7 +146,9 @@ if(COMPILE_WASM)
     -sSTRICT=1
     # You know we need it
     -sALLOW_MEMORY_GROWTH=1
-    -sENVIRONMENT=web,worker
+    -sENVIRONMENT=worker
+    -sEXPORT_NAME=Bergamot
+    # -sEXPORT_ES6=1
     # No need to call main(), there's nothing there.
     -sINVOKE_RUN=0
     # No need for filesystem code in the generated Javascript
@@ -162,6 +164,8 @@ if(COMPILE_WASM)
     # Dynamic execution is either frowned upon or blocked inside browser extensions
     -sDYNAMIC_EXECUTION=0
   )
+
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s MINIMAL_RUNTIME=1")
 endif(COMPILE_WASM)
 
 # Needs to be enabled before including the folder containing tests (src/tests)
@@ -182,4 +186,3 @@ option(COMPILE_PYTHON "Compile python bindings. Intended to be activated with se
 if(COMPILE_PYTHON)
   add_subdirectory(bindings/python)
 endif(COMPILE_PYTHON)
-
