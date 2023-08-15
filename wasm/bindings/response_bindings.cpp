@@ -8,11 +8,14 @@
 #include <vector>
 
 #include "response.h"
+#include "wrappers.h"
 
 using Response = marian::bergamot::Response;
 using ByteRange = marian::bergamot::ByteRange;
+using ResponseWrapper = marian::bergamot::ResponseWrapper;
 
 using namespace emscripten;
+
 
 // Binding code
 EMSCRIPTEN_BINDINGS(byte_range) {
@@ -20,13 +23,14 @@ EMSCRIPTEN_BINDINGS(byte_range) {
 }
 
 EMSCRIPTEN_BINDINGS(response) {
-  class_<Response>("Response")
-      .constructor<>()
-      .function("size", &Response::size)
-      .function("getOriginalText", &Response::getOriginalText)
-      .function("getTranslatedText", &Response::getTranslatedText)
-      .function("getSourceSentence", &Response::getSourceSentenceAsByteRange)
-      .function("getTranslatedSentence", &Response::getTargetSentenceAsByteRange);
+  class_<ResponseWrapper>("ResponseWrapper")
+      .smart_ptr_constructor("ResponseWrapper", &std::make_shared<ResponseWrapper>)
+      .function("size", &ResponseWrapper::size)
+      .function("getOriginalText", &ResponseWrapper::getOriginalText)
+      .function("getTranslatedText", &ResponseWrapper::getTranslatedText)
+      .function("getSourceSentence", &ResponseWrapper::getSourceSentenceAsByteRange)
+      .function("getTranslatedSentence", &ResponseWrapper::getTargetSentenceAsByteRange)
+      .function("getAlignments", &ResponseWrapper::getAlignments);
 
-  register_vector<Response>("VectorResponse");
+  register_vector<ResponseWrapper>("VectorResponseWrapper");
 }

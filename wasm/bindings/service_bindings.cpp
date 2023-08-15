@@ -5,6 +5,7 @@
 #include <emscripten/bind.h>
 
 #include "service.h"
+#include "wrappers.h"
 
 using namespace emscripten;
 
@@ -12,6 +13,7 @@ using BlockingService = marian::bergamot::BlockingService;
 using TranslationModel = marian::bergamot::TranslationModel;
 using AlignedMemory = marian::bergamot::AlignedMemory;
 using MemoryBundle = marian::bergamot::MemoryBundle;
+using BlockingServiceWrapper = marian::bergamot::BlockingServiceWrapper;
 
 val getByteArrayView(AlignedMemory& alignedMemory) {
   return val(typed_memory_view(alignedMemory.size(), alignedMemory.as<char>()));
@@ -77,17 +79,17 @@ EMSCRIPTEN_BINDINGS(blocking_service_config) {
       .field("cacheSize", &BlockingService::Config::cacheSize);
 }
 
-std::shared_ptr<BlockingService> BlockingServiceFactory(const BlockingService::Config& config) {
+std::shared_ptr<BlockingServiceWrapper> BlockingServiceFactory(const BlockingService::Config& config) {
   auto copy = config;
-  copy.logger.level = "critical";
-  return std::make_shared<BlockingService>(copy);
+  copy.logger.level = "trace";
+  return std::make_shared<BlockingServiceWrapper>(copy);
 }
 
 EMSCRIPTEN_BINDINGS(blocking_service) {
-  class_<BlockingService>("BlockingService")
+  class_<BlockingServiceWrapper>("BlockingService")
       .smart_ptr_constructor("BlockingService", &BlockingServiceFactory)
-      .function("translate", &BlockingService::translateMultiple)
-      .function("translateViaPivoting", &BlockingService::pivotMultiple);
+      .function("translate", &BlockingServiceWrapper::translate)
+      .function("translateViaPivoting", &BlockingServiceWrapper::translateViaPivoting);
 
   register_vector<std::string>("VectorString");
 }
